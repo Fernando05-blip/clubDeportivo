@@ -3,7 +3,6 @@ import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Obtener __dirname en un módulo ES
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -14,23 +13,19 @@ app.use(express.urlencoded({ extended: true }));
 
 const filePath = path.join(__dirname, 'db', 'deportes.json');
 
-// Middleware para leer el archivo JSON
 const leerDeportes = async () => {
   const data = await readFile(filePath, 'utf8');
   return JSON.parse(data);
 };
 
-// Middleware para escribir en el archivo JSON
 const escribirDeportes = async (data) => {
   await writeFile(filePath, JSON.stringify(data, null, 2));
 };
 
-// Ruta para servir el archivo HTML
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Leer (JSON)
 app.get('/deportes', async (req, res) => {
   try {
     const deportes = await leerDeportes();
@@ -41,7 +36,6 @@ app.get('/deportes', async (req, res) => {
   }
 });
 
-// Crear
 app.post('/agregar', async (req, res) => {
   try {
     const { nombre, precio } = req.body;
@@ -60,7 +54,6 @@ app.post('/agregar', async (req, res) => {
   }
 });
 
-// Borrar
 app.delete('/borrar/:nombre', async (req, res) => {
   try {
     const { nombre } = req.params;
@@ -78,7 +71,6 @@ app.delete('/borrar/:nombre', async (req, res) => {
   }
 });
 
-// Editar
 app.put('/editar/:nombre', async (req, res) => {
   try {
     const { nombre } = req.params;
@@ -101,7 +93,6 @@ app.put('/editar/:nombre', async (req, res) => {
   }
 });
 
-// Ruta 404
 app.all('*', (req, res) => {
   res.status(404).send('Sitio no encontrado...');
 });
