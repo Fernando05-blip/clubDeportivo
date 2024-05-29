@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
@@ -16,22 +14,25 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
 </head>
-<body>
 <div class="container">
+
   <h1>Deportes</h1>
-  <div class="border rounded p-4">
+  <div action="/agregar" class="border rounded p-4">
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">Nombre</label>
+
       <div class="col-sm-10">
         <input id="nombre" type="text" class="form-control" name="nombre" />
       </div>
     </div>
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">Precio</label>
+
       <div class="col-sm-10">
-        <input id="precio" type="text" class="form-control" name="precio" />
+        <input id="precio" type="text" class="form-control" precio="precio" />
       </div>
     </div>
+
     <button class="btn btn-info" onclick="agregar()">Agregar</button>
   </div>
 </div>
@@ -51,69 +52,61 @@
 
 <script>
   $(document).ready(function () {
-    getData();
-  });
+    getData()
+  })
 
   function getData() {
-    $('#cuerpo').html('');
-    axios.get('/deportes').then((response) => {
-      let deportes = response.data;
+    $('#cuerpo').html('')
+    axios.get('/deportes').then((data) => {
+      let deportes = data.data.deportes
       deportes.forEach((d, i) => {
         $('#cuerpo').append(`
-          <tr>
-            <th scope="row">${i + 1}</th>
-            <td>${d.nombre}</td>
-            <td>${d.precio}</td>
-            <td>
-              <button class="btn btn-warning" onclick='preEdit("${d.nombre}", "${d.precio}")' data-toggle="modal" data-target="#exampleModal">Editar</button>
-              <button class="btn btn-danger" onclick='eliminar("${d.nombre}")'>Eliminar</button>
-            </td>
-          </tr>
-        `);
-      });
-    }).catch((error) => {
-      console.error('Error al obtener los deportes:', error);
-    });
+        <tr>
+          <th scope="row">${i + 1}</th>
+          <td>${d.nombre}</td>
+          <td>${d.precio}</td>
+          <td>
+            <button class="btn btn-warning" onclick='preEdit("${d.nombre}","${d.precio
+          }")' data-toggle="modal" data-target="#exampleModal">Editar</button>
+            <button class="btn btn-danger" onclick='eliminar("${d.nombre}")'>Eliminar</button>
+          </td>
+        </tr>
+        `)
+      })
+    })
   }
 
   function preEdit(nombre, precio) {
-    $('#nombreModal').val(nombre);
-    $('#precioModal').val(precio);
+    $('#nombreModal').val(nombre)
+    $('#precioModal').val(precio)
   }
 
   function agregar() {
-    let nombre = $('#nombre').val();
-    let precio = $('#precio').val();
-    axios.post('/agregar', { nombre, precio }).then((response) => {
-      alert('Deporte agregado');
-      getData();
-    }).catch((error) => {
-      alert('Error al agregar deporte');
-      console.error(error);
-    });
+    let nombre = $('#nombre').val()
+    let precio = $('#precio').val()
+    axios.get(`/agregar?nombre=${nombre}&precio=${precio}`).then((data) => {
+      alert(data.data)
+      getData()
+    })
+    $('#exampleModal').modal('hide')
   }
 
   function edit() {
-    let nombre = $('#nombreModal').val();
-    let nuevoPrecio = $('#precioModal').val();
-    axios.put(`/editar/${nombre}`, { nuevoPrecio }).then((response) => {
-      alert('Deporte editado');
-      getData();
-    }).catch((error) => {
-      alert('Error al editar deporte');
-      console.error(error);
-    });
-    $('#exampleModal').modal('hide');
+    let nombre = $('#nombreModal').val()
+    let precio = $('#precioModal').val()
+    axios.get(`/editar?nombre=${nombre}&precio=${precio}`).then((data) => {
+      alert(data.data)
+      getData()
+    })
+    $('#exampleModal').modal('hide')
   }
 
   function eliminar(nombre) {
-    axios.delete(`/borrar/${nombre}`).then((response) => {
-      alert('Deporte eliminado');
-      getData();
-    }).catch((error) => {
-      alert('Error al eliminar deporte');
-      console.error(error);
-    });
+    axios.get(`/eliminar?nombre=${nombre}`).then((data) => {
+      alert(data.data)
+      getData()
+    })
+    $('#exampleModal').modal('hide')
   }
 </script>
 
@@ -122,22 +115,24 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="rounded p-4">
+        </form>
         <div class="form-group row">
           <label class="col-sm-2 col-form-label">Nombre</label>
+
           <div class="col-sm-10">
             <input id="nombreModal" disabled type="text" class="form-control" name="nombre" />
           </div>
         </div>
         <div class="form-group row">
           <label class="col-sm-2 col-form-label">Precio</label>
+
           <div class="col-sm-10">
-            <input id="precioModal" type="text" class="form-control" name="precio" />
+            <input id="precioModal" type="text" class="form-control" precio="precio" />
           </div>
         </div>
+
         <button class="btn btn-warning" onclick="edit()">Editar</button>
       </div>
     </div>
   </div>
 </div>
-</body>
-</html>
